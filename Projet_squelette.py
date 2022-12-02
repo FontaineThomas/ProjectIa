@@ -119,9 +119,10 @@ class Board:
         return [i for i in range(7) if (self.grid[i][5] == 0)]
 
     def add_disk(self, column, player, update_display=True):
-        for j in range(6):
-            if self.grid[column][j] == 0:
-                break
+        # for j in range(6):
+        #     if self.grid[column][j] == 0:
+        #         break
+        j = self.grid[column].index(0)
         self.grid[column][j] = player
         if update_display:
             canvas1.itemconfig(disks[column][j], fill=disk_color[player])
