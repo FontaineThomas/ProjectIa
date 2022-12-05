@@ -10,6 +10,8 @@ disk_color = ['white', 'red', 'orange']
 disks = list()
 iteration = 0
 
+max_value = 1000000
+
 player_type = ['human']
 for i in range(42):
     player_type.append('AI: alpha-beta level ' + str(i + 1))
@@ -17,17 +19,21 @@ for i in range(42):
 
 def alpha_beta_decision(board, turn, ai_level, queue, max_player):
     global iteration
+    global max_value
     possible_moves = board.get_possible_moves()
     best_move = possible_moves[0]
-    best_value = -2
+    best_value = -max_value
     out_list = {}
     jobs = []
+    alpha = -max_value
+    beta = max_value
     for move in possible_moves:
         updated_board = board.copy()
         updated_board.add_disk(move, max_player,
                                update_display=False)  # l'IA met une valeur dans la grille , soit 1 soit 2 (dÃ©pend de son tour de jeu, pour Ãªtre en accord avec la mÃ©thode move)
         thread = threading.Thread(target=alpha_aux_func(move, updated_board, turn, ai_level, max_player, out_list))
         jobs.append(thread)
+        # value = alpha_min_value(board, turn+1, ai_level-1, max_player, alpha, beta)
         # if value > best_value:
         #     best_value = value
         #     best_move = move
@@ -54,18 +60,20 @@ def alpha_beta_decision(board, turn, ai_level, queue, max_player):
 
 
 def alpha_aux_func(move, board, turn, ai_level, max_player, out_list):
-    value = alpha_min_value(board, turn, ai_level, max_player, 0, 1)
+    global max_value
+    value = alpha_min_value(board, turn, ai_level, max_player, -max_value, max_value)
     out_list[move] = value
 
 
 def alpha_min_value(board, turn, ai_level, max_player, alpha, beta):
+    global max_value
     aux = board.check_victory()
     if aux[0] and aux[1] == max_player:
-        return 1
+        return max_value
     elif aux[0]:
-        return -1
+        return -max_value
     elif ai_level == 0:
-        return 0
+        return board.eval(max_player)
     possible_moves = board.get_possible_moves()
     value = 2
     for move in possible_moves:
@@ -80,13 +88,14 @@ def alpha_min_value(board, turn, ai_level, max_player, alpha, beta):
 
 
 def alpha_max_value(board, turn, ai_level, max_player, alpha, beta):
+    global max_value
     aux = board.check_victory()
     if aux[0] and aux[1] + 1 == max_player:
-        return 1
+        return max_value
     elif aux[0]:
-        return -1
+        return -max_value
     elif ai_level == 0:
-        return 0
+        return board.eval(max_player)
     possible_moves = board.get_possible_moves()
     value = -2
     for move in possible_moves:
@@ -100,12 +109,49 @@ def alpha_max_value(board, turn, ai_level, max_player, alpha, beta):
     return value
 
 
+def eval_list(l, player):
+    retour = 0
+    if l.count(0) == 1:
+        if l.count(player) == 3:
+            retour += 40
+        elif l.count(player) == 0:
+            retour -= 40
+    elif l.count(0) == 2:
+        if l.count(player) == 2:
+            retour += 1
+        elif l.count(player) == 0:
+            retour -= 1
+    return retour
+
+
 class Board:
-    grid = np.array([[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0],
-                     [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]])
+    grid = np.array([[0, 0, 0, 0, 0, 0],
+                     [0, 0, 0, 0, 0, 0],
+                     [0, 0, 0, 0, 0, 0],
+                     [0, 0, 0, 0, 0, 0],
+                     [0, 0, 0, 0, 0, 0],
+                     [0, 0, 0, 0, 0, 0],
+                     [0, 0, 0, 0, 0, 0]])
 
     def eval(self, player):
-        return 0
+        retour = 0
+        # on traite les lignes
+        for j in range(4):
+            for i in range(6):
+                ligne = [self.grid[j][i], self.grid[j+1][i], self.grid[j+2][i], self.grid[j+3][i]]
+                retour += eval_list(ligne, player)
+        # on traite les colonnes
+        for j in range(7):
+            for i in range(3):
+                ligne = [self.grid[j][i], self.grid[j][i+1], self.grid[j][i+2], self.grid[j][i+3]]
+                retour += eval_list(ligne, player)
+        for j in range(4):
+            for i in range(3):
+                ligne = [self.grid[j][i], self.grid[j + 1][i + 1], self.grid[j + 2][i + 2], self.grid[j + 3][i + 3]]
+                retour += eval_list(ligne, player)
+                ligne = [self.grid[6-j][5-i], self.grid[6-(j + 1)][5-(i + 1)], self.grid[6-(j + 2)][5-(i + 2)], self.grid[6-(j + 3)][5-(i + 3)]]
+                retour += eval_list(ligne, player)
+        return retour
 
     def copy(self):
         global iteration
@@ -125,7 +171,7 @@ class Board:
         # if self.grid[3][5] == 0:
         #     possible_moves.append(3)
         # for shift_from_center in range(1, 4):
-        #     if self.grid[3 + shift_from_center][5] == 0:
+        #     if self.grid[3 + shift_from_center][5] == 0
         #         possible_moves.append(3 + shift_from_center)
         #     if self.grid[3 - shift_from_center][5] == 0:
         #         possible_moves.append(3 - shift_from_center)
@@ -286,3 +332,10 @@ button.grid(row=4, column=1)
 canvas1.bind('<Button-1>', game.click)
 
 window.mainloop()
+
+
+
+
+
+
+
