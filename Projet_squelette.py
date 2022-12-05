@@ -1,3 +1,4 @@
+import multiprocessing
 import threading
 import tkinter as tk
 from tkinter import ttk
@@ -23,7 +24,8 @@ def alpha_beta_decision(board, turn, ai_level, queue, max_player):
     possible_moves = board.get_possible_moves()
     best_move = possible_moves[0]
     best_value = -max_value
-    out_list = {}
+    out_list = []
+    # out_list = {}
     jobs = []
     alpha = -max_value
     beta = max_value
@@ -31,29 +33,30 @@ def alpha_beta_decision(board, turn, ai_level, queue, max_player):
         updated_board = board.copy()
         updated_board.add_disk(move, max_player,
                                update_display=False)  # l'IA met une valeur dans la grille , soit 1 soit 2 (dÃ©pend de son tour de jeu, pour Ãªtre en accord avec la mÃ©thode move)
-        thread = threading.Thread(target=alpha_aux_func(move, updated_board, turn, ai_level, max_player, out_list))
-        jobs.append(thread)
-        # value = alpha_min_value(board, turn+1, ai_level-1, max_player, alpha, beta)
-        # if value > best_value:
-        #     best_value = value
-        #     best_move = move
-        # if best_value >= beta:
-        #     queue.put(best_move)
-        #     print(iteration)
-        #     iteration = 0
-        #     return
-        # alpha = max(alpha, value)
-
-    for j in jobs:
-        j.start()
-
-    for j in jobs:
-        j.join()
-
-    for move in possible_moves:
-        if out_list[move] > best_value:
-            best_value = out_list[move]
+        # thread = multiprocessing.Process(target=alpha_aux_func(move, updated_board, turn, ai_level, max_player, out_list))
+        # jobs.append(thread)
+        value = alpha_min_value(updated_board, turn+1, ai_level-1, max_player, alpha, beta)
+        out_list.append(value)
+        if value > best_value:
+            best_value = value
             best_move = move
+            if best_value >= beta:
+                queue.put(best_move)
+                print(iteration)
+                iteration = 0
+                return
+        alpha = max(alpha, value)
+
+    # for j in jobs:
+    #     j.start()
+    #
+    # for j in jobs:
+    #     j.join()
+    #
+    # for move in possible_moves:
+    #     if out_list[move] > best_value:
+    #         best_value = out_list[move]
+    #         best_move = move
     queue.put(best_move)
     print(iteration)
     iteration = 0
@@ -75,7 +78,7 @@ def alpha_min_value(board, turn, ai_level, max_player, alpha, beta):
     elif ai_level == 0:
         return board.eval(max_player)
     possible_moves = board.get_possible_moves()
-    value = 2
+    value = max_value
     for move in possible_moves:
         updated_board = board.copy()
         updated_board.add_disk(move, turn % 2 + 1, update_display=False)
@@ -90,14 +93,14 @@ def alpha_min_value(board, turn, ai_level, max_player, alpha, beta):
 def alpha_max_value(board, turn, ai_level, max_player, alpha, beta):
     global max_value
     aux = board.check_victory()
-    if aux[0] and aux[1] + 1 == max_player:
+    if aux[0] and aux[1] == max_player:
         return max_value
     elif aux[0]:
         return -max_value
     elif ai_level == 0:
         return board.eval(max_player)
     possible_moves = board.get_possible_moves()
-    value = -2
+    value = -max_value
     for move in possible_moves:
         updated_board = board.copy()
         updated_board.add_disk(move, turn % 2 + 1, update_display=False)
