@@ -1,3 +1,4 @@
+import threading
 import tkinter as tk
 from tkinter import ttk
 import numpy as np
@@ -19,35 +20,50 @@ def alpha_beta_decision(board, turn, ai_level, queue, max_player):
     possible_moves = board.get_possible_moves()
     best_move = possible_moves[0]
     best_value = -2
-    alpha = 0
-    beta = 1
+    out_list = {}
+    jobs = []
     for move in possible_moves:
         updated_board = board.copy()
-        updated_board.add_disk(move, turn % 2 + 1,
+        updated_board.add_disk(move, max_player,
                                update_display=False)  # l'IA met une valeur dans la grille , soit 1 soit 2 (dÃ©pend de son tour de jeu, pour Ãªtre en accord avec la mÃ©thode move)
-        value = alpha_min_value(updated_board, turn + 1, ai_level - 1, max_player, alpha, beta)
-        if value > best_value:
-            best_value = value
+        thread = threading.Thread(target=alpha_aux_func(move, updated_board, turn, ai_level, max_player, out_list))
+        jobs.append(thread)
+        # if value > best_value:
+        #     best_value = value
+        #     best_move = move
+        # if best_value >= beta:
+        #     queue.put(best_move)
+        #     print(iteration)
+        #     iteration = 0
+        #     return
+        # alpha = max(alpha, value)
+
+    for j in jobs:
+        j.start()
+
+    for j in jobs:
+        j.join()
+
+    for move in possible_moves:
+        if out_list[move] > best_value:
+            best_value = out_list[move]
             best_move = move
-        if best_value >= beta:
-            queue.put(best_move)
-            print(iteration)
-            iteration = 0
-            return
-        alpha = max(alpha, value)
     queue.put(best_move)
     print(iteration)
     iteration = 0
 
 
+def alpha_aux_func(move, board, turn, ai_level, max_player, out_list):
+    value = alpha_min_value(board, turn, ai_level, max_player, 0, 1)
+    out_list[move] = value
+
+
 def alpha_min_value(board, turn, ai_level, max_player, alpha, beta):
     aux = board.check_victory()
-    if aux[0] and aux[1]+1 == max_player:
+    if aux[0] and aux[1] == max_player:
         return 1
     elif aux[0]:
         return -1
-    elif turn > 42:
-        return 0
     elif ai_level == 0:
         return 0
     possible_moves = board.get_possible_moves()
@@ -65,12 +81,10 @@ def alpha_min_value(board, turn, ai_level, max_player, alpha, beta):
 
 def alpha_max_value(board, turn, ai_level, max_player, alpha, beta):
     aux = board.check_victory()
-    if aux[0] and aux[1]+1 == max_player:
+    if aux[0] and aux[1] + 1 == max_player:
         return 1
     elif aux[0]:
         return -1
-    elif turn > 42:
-        return 0
     elif ai_level == 0:
         return 0
     possible_moves = board.get_possible_moves()
@@ -154,7 +168,7 @@ class Board:
                     4 - vertical_shift] == \
                         self.grid[horizontal_shift + 2][3 - vertical_shift] == self.grid[horizontal_shift + 3][
                     2 - vertical_shift] != 0:
-                    return [True, self.grid[horizontal_shift + 3][2 - vertical_shift]]
+                    return [True, self.grid[horizontal_shift][5 - vertical_shift]]
         return [False, None]
 
 
