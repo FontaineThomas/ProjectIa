@@ -1,5 +1,3 @@
-import multiprocessing
-import threading
 import tkinter as tk
 from tkinter import ttk
 import numpy as np
@@ -9,9 +7,8 @@ from queue import Queue
 
 disk_color = ['white', 'red', 'orange']
 disks = list()
-iteration = 0
 
-max_value = 1000000
+iteration = 0
 
 player_type = ['human']
 for i in range(42):
@@ -23,12 +20,12 @@ def alpha_beta_decision(board, turn, ai_level, queue, max_player):
     global max_value
     possible_moves = board.get_possible_moves()
     best_move = possible_moves[0]
-    best_value = -max_value
+    best_value = 0.
     out_list = []
     # out_list = {}
     jobs = []
-    alpha = -max_value
-    beta = max_value
+    alpha = 0.
+    beta = 1.
     for move in possible_moves:
         updated_board = board.copy()
         updated_board.add_disk(move, max_player,
@@ -63,22 +60,20 @@ def alpha_beta_decision(board, turn, ai_level, queue, max_player):
 
 
 def alpha_aux_func(move, board, turn, ai_level, max_player, out_list):
-    global max_value
-    value = alpha_min_value(board, turn, ai_level, max_player, -max_value, max_value)
+    value = alpha_min_value(board, turn, ai_level, max_player, 0, 1)
     out_list[move] = value
 
 
 def alpha_min_value(board, turn, ai_level, max_player, alpha, beta):
-    global max_value
     aux = board.check_victory()
     if aux[0] and aux[1] == max_player:
-        return max_value
+        return 1
     elif aux[0]:
-        return -max_value
+        return 0
     elif ai_level == 0:
         return board.eval(max_player)
     possible_moves = board.get_possible_moves()
-    value = max_value
+    value = 1
     for move in possible_moves:
         updated_board = board.copy()
         updated_board.add_disk(move, turn % 2 + 1, update_display=False)
@@ -91,16 +86,15 @@ def alpha_min_value(board, turn, ai_level, max_player, alpha, beta):
 
 
 def alpha_max_value(board, turn, ai_level, max_player, alpha, beta):
-    global max_value
     aux = board.check_victory()
     if aux[0] and aux[1] == max_player:
-        return max_value
+        return 1
     elif aux[0]:
-        return -max_value
+        return 0
     elif ai_level == 0:
         return board.eval(max_player)
     possible_moves = board.get_possible_moves()
-    value = -max_value
+    value = 0
     for move in possible_moves:
         updated_board = board.copy()
         updated_board.add_disk(move, turn % 2 + 1, update_display=False)
@@ -112,21 +106,6 @@ def alpha_max_value(board, turn, ai_level, max_player, alpha, beta):
     return value
 
 
-def eval_list(l, player):
-    retour = 0
-    if l.count(0) == 1:
-        if l.count(player) == 3:
-            retour -= 1
-        elif l.count(player) == 0:
-            retour += 1
-    # elif l.count(0) == 2:
-    #     if l.count(player) == 2:
-    #         retour -= 1
-    #     elif l.count(player) == 0:
-    #         retour += 1
-    return retour
-
-
 class Board:
     grid = np.array([[0, 0, 0, 0, 0, 0],
                      [0, 0, 0, 0, 0, 0],
@@ -136,24 +115,94 @@ class Board:
                      [0, 0, 0, 0, 0, 0],
                      [0, 0, 0, 0, 0, 0]])
 
+    moi_2 = 2
+    moi_3 = moi_2*2
+    moi_4 = moi_3*2
+    autre_4 = moi_4
+    autre_3 = moi_3
+    autre_2 = moi_2
+    default = 0.5
+
     def __eval_lignes__(self, player):
-        retour = 0
+        moi = 0.
+        autre = 0
         for colonne in range(4):
             for ligne in range(6):
-                tuple = [self.grid[colonne+i][ligne] for i in range(4)]
-                retour += eval_list(tuple, player)
-        return retour
+                tuple = [self.grid[colonne + i][ligne] for i in range(4)]
+                if tuple.count(0) == 0:
+                    if tuple.count(player) == 4:
+                        moi += self.moi_4
+                    elif tuple.count(player) == 0:
+                        autre += self.autre_4
+                elif tuple.count(0) == 1:
+                    if tuple.count(player) == 3:
+                        moi += self.moi_3
+                    elif tuple.count(player) == 0:
+                        autre += self.autre_3
+                elif tuple.count(0) == 2:
+                    if tuple.count(player) == 2:
+                        moi += self.moi_2
+                    elif tuple.count(player) == 0:
+                        autre += self.autre_2
+        return moi, autre
 
     def __eval_colonnes__(self, player):
-        retour = 0
+        moi = 0.
+        autre = 0
         for colonne in range(7):
             for ligne in range(3):
-                tuple = [self.grid[colonne][ligne+i] for i in range(4)]
-                retour += eval_list(tuple, player)
-        return retour
+                tuple = [self.grid[colonne][ligne + i] for i in range(4)]
+                if tuple.count(0) == 0:
+                    if tuple.count(player) == 4:
+                        moi += self.moi_4
+                    elif tuple.count(player) == 0:
+                        autre += self.autre_4
+                elif tuple.count(0) == 1:
+                    if tuple.count(player) == 3:
+                        moi += self.moi_3
+                    elif tuple.count(player) == 0:
+                        autre += self.autre_3
+                elif tuple.count(0) == 2:
+                    if tuple.count(player) == 2:
+                        moi += self.moi_2
+                    elif tuple.count(player) == 0:
+                        autre += self.autre_2
+        return moi, autre
+
+    def __eval_diagonales__(self, player):
+        moi = 0.
+        autre = 0
+        for colonne in range(4):
+            for ligne in range(3):
+                tuple = [[self.grid[colonne + i][ligne + i] for i in range(4)],
+                         [self.grid[-(colonne + i + 1)][ligne + i] for i in range(4)]]
+                for i in range(2):
+                    if tuple[i].count(0) == 0:
+                        if tuple[i].count(player) == 4:
+                            moi += self.moi_4
+                        elif tuple[i].count(player) == 0:
+                            autre += self.autre_4
+                    elif tuple[i].count(0) == 1:
+                        if tuple[i].count(player) == 3:
+                            moi += self.moi_3
+                        elif tuple[i].count(player) == 0:
+                            autre += self.autre_3
+                    elif tuple[i].count(0) == 2:
+                        if tuple[i].count(player) == 2:
+                            moi += self.moi_2
+                        elif tuple[i].count(player) == 0:
+                            autre += self.autre_2
+        return moi, autre
 
     def eval(self, player):
-        return self.__eval_lignes__(player)+self.__eval_colonnes__(player)
+        moi, autre = self.__eval_lignes__(player)
+        moi_2, autre_2 = self.__eval_colonnes__(player)
+        moi_3, autre_3 = self.__eval_diagonales__(player)
+        moi += moi_2 + moi_3
+        autre += autre_2 + autre_3
+        if moi + autre == 0:
+            return self.default
+        return moi / (moi + autre**3)
 
     def copy(self):
         global iteration
@@ -178,13 +227,11 @@ class Board:
             if self.grid[3 - shift_from_center][5] == 0:
                 possible_moves.append(3 - shift_from_center)
         return possible_moves
-        # return [i for i in range(7) if (self.grid[i][5] == 0)]
 
     def add_disk(self, column, player, update_display=True):
         for j in range(6):
             if self.grid[column][j] == 0:
                 break
-        # j = self.grid[column].index(0)
         self.grid[column][j] = player
         if update_display:
             canvas1.itemconfig(disks[column][j], fill=disk_color[player])
@@ -320,9 +367,9 @@ combobox_player2 = ttk.Combobox(window, state='readonly')
 combobox_player2.grid(row=3, column=1)
 
 combobox_player1['values'] = player_type
-combobox_player1.current(6)
+combobox_player1.current(4)
 combobox_player2['values'] = player_type
-combobox_player2.current(6)
+combobox_player2.current(4)
 
 button2 = tk.Button(window, text='New game', command=game.launch)
 button2.grid(row=4, column=0)
@@ -333,11 +380,6 @@ button.grid(row=4, column=1)
 # Mouse handling
 canvas1.bind('<Button-1>', game.click)
 
+game.launch()
+
 window.mainloop()
-
-
-
-
-
-
-
