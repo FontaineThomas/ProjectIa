@@ -122,13 +122,7 @@ class Board:
                      [0, 0, 0, 0, 0, 0],
                      [0, 0, 0, 0, 0, 0]])
 
-    points = [0, 0, 2, 4, 10000]
-    moi_2 = 2
-    moi_3 = moi_2*2
-    moi_4 = 10000
-    autre_4 = moi_4
-    autre_3 = moi_3
-    autre_2 = moi_2
+    points = [0, 0, 2, 3, 10000]
     default = 0.5
 
     def __eval_lignes__(self, player):
@@ -174,19 +168,19 @@ class Board:
 
     def eval(self, player):
         moi, autre = self.__eval_lignes__(player)
-        if moi >= self.moi_4:
+        if moi >= self.points[-1]:
             return 1
-        if autre >= self.autre_4:
+        if autre >= self.points[-1]:
             return 0
         moi_2, autre_2 = self.__eval_colonnes__(player)
-        if moi_2 >= self.moi_4:
+        if moi_2 >= self.points[-1]:
             return 1
-        if autre_2 >= self.autre_4:
+        if autre_2 >= self.points[-1]:
             return 0
         moi_3, autre_3 = self.__eval_diagonales__(player)
-        if moi_3 >= self.moi_4:
+        if moi_3 >= self.points[-1]:
             return 1
-        if autre_3 >= self.autre_4:
+        if autre_3 >= self.points[-1]:
             return 0
         moi += moi_2 + moi_3
         autre += autre_2 + autre_3
