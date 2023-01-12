@@ -136,8 +136,8 @@ class Board:
         autre = 0
         for colonne in range(4):
             for ligne in range(6):
-                tuple = [self.grid[colonne + i][ligne] for i in range(4)]
-                count_value = my_count(tuple)
+                # tuple = [self.grid[colonne + i][ligne] for i in range(4)]
+                count_value = my_count([self.grid[colonne + i][ligne] for i in range(4)])
                 if count_value[player] == 0:
                     autre += self.points[count_value[player % 2+1]]
                 elif count_value[player % 2+1] == 0:
@@ -149,8 +149,8 @@ class Board:
         autre = 0
         for colonne in range(7):
             for ligne in range(3):
-                tuple = [self.grid[colonne][ligne + i] for i in range(4)]
-                count_value = my_count(tuple)
+                # tuple = [self.grid[colonne][ligne + i] for i in range(4)]
+                count_value = my_count([self.grid[colonne][ligne + i] for i in range(4)])
                 if count_value[player] == 0:
                     autre += self.points[count_value[player % 2+1]]
                 elif count_value[player % 2+1] == 0:
@@ -162,28 +162,48 @@ class Board:
         autre = 0
         for colonne in range(4):
             for ligne in range(3):
-                tuple = [[self.grid[colonne + i][ligne + i] for i in range(4)],
-                         [self.grid[-(colonne + i + 1)][ligne + i] for i in range(4)]]
-                for i in range(2):
-                    count_value = my_count(tuple[i])
-                    if count_value[player] == 0:
-                        autre += self.points[count_value[player % 2+1]]
-                    elif count_value[player % 2+1] == 0:
-                        moi += self.points[count_value[player]]
+                # tuple = [[self.grid[colonne + i][ligne + i] for i in range(4)],
+                #          [self.grid[-(colonne + i + 1)][ligne + i] for i in range(4)]]
+                # for i in range(2):
+                #     count_value = my_count(tuple[i])
+                #     if count_value[player] == 0:
+                #         autre += self.points[count_value[player % 2+1]]
+                #     elif count_value[player % 2+1] == 0:
+                #         moi += self.points[count_value[player]]
+                # tuple = [[self.grid[colonne + i][ligne + i] for i in range(4)],
+                #          [self.grid[-(colonne + i + 1)][ligne + i] for i in range(4)]]
+                count_value = my_count([self.grid[colonne + i][ligne + i] for i in range(4)])
+                if count_value[player] == 0:
+                    autre += self.points[count_value[player % 2+1]]
+                elif count_value[player % 2+1] == 0:
+                    moi += self.points[count_value[player]]
+                count_value = my_count([self.grid[-(colonne + i + 1)][ligne + i] for i in range(4)])
+                if count_value[player] == 0:
+                    autre += self.points[count_value[player % 2+1]]
+                elif count_value[player % 2+1] == 0:
+                    moi += self.points[count_value[player]]
         return moi, autre
 
     def eval(self, player):
         moi, autre = self.__eval_lignes__(player)
-        moi_2, autre_2 = self.__eval_colonnes__(player)
-        moi_3, autre_3 = self.__eval_diagonales__(player)
-        moi += moi_2 + moi_3
-        autre += autre_2 + autre_3
-        if moi + autre == 0:
-            return self.default
         if moi >= self.moi_4:
             return 1
         if autre >= self.autre_4:
             return 0
+        moi_2, autre_2 = self.__eval_colonnes__(player)
+        if moi_2 >= self.moi_4:
+            return 1
+        if autre_2 >= self.autre_4:
+            return 0
+        moi_3, autre_3 = self.__eval_diagonales__(player)
+        if moi_3 >= self.moi_4:
+            return 1
+        if autre_3 >= self.autre_4:
+            return 0
+        moi += moi_2 + moi_3
+        autre += autre_2 + autre_3
+        if moi + autre == 0:
+            return self.default
         return moi / (moi + autre**3)
 
     def copy(self):
@@ -224,30 +244,39 @@ class Board:
     def __check_lignes__(self):
         for colonne in range(4):
             for ligne in range(6):
-                tuple = [self.grid[colonne + i][ligne] for i in range(4)]
-                count_value = my_count(tuple)
+                count_value = my_count([self.grid[colonne + i][ligne] for i in range(4)])
                 if count_value[1] == 4 or count_value[2] == 4:
-                    return [True, tuple[0]]
+                    return [True, self.grid[colonne ][ligne]]
         return [False, None]
 
     def __check_colonnes__(self):
         for colonne in range(7):
             for ligne in range(3):
-                tuple = [self.grid[colonne][ligne + i] for i in range(4)]
-                count_value = my_count(tuple)
+                # tuple = [self.grid[colonne][ligne + i] for i in range(4)]
+                count_value = my_count([self.grid[colonne][ligne + i] for i in range(4)])
                 if count_value[1] == 4 or count_value[2] == 4:
-                    return [True, tuple[0]]
+                    return [True, self.grid[colonne][ligne]]
         return [False, None]
 
     def __check_diagonales__(self):
         for colonne in range(4):
             for ligne in range(3):
-                tuple = [[self.grid[colonne + i][ligne + i] for i in range(4)],
-                         [self.grid[-(colonne + i + 1)][ligne + i] for i in range(4)]]
-                for i in range(2):
-                    count_value = my_count(tuple[i])
-                    if count_value[1] == 4 or count_value[2] == 4:
-                        return [True, tuple[i][0]]
+                # tuple = [[self.grid[colonne + i][ligne + i] for i in range(4)],
+                #          [self.grid[-(colonne + i + 1)][ligne + i] for i in range(4)]]
+                # for i in range(2):
+                #     count_value = my_count(tuple[i])
+                #     if count_value[1] == 4 or count_value[2] == 4:
+                #         return [True, tuple[i][0]]
+                # tuple = [[self.grid[colonne + i][ligne + i] for i in range(4)],
+                #          [self.grid[-(colonne + i + 1)][ligne + i] for i in range(4)]]
+                # for i in range(2):
+                count_value = my_count([self.grid[colonne + i][ligne + i] for i in range(4)])
+                if count_value[1] == 4 or count_value[2] == 4:
+                    return [True, self.grid[colonne][ligne]]
+
+                count_value = my_count([self.grid[-(colonne + i + 1)][ligne + i] for i in range(4)])
+                if count_value[1] == 4 or count_value[2] == 4:
+                    return [True, self.grid[colonne][ligne]]
         return [False, None]
 
     def check_victory(self):
