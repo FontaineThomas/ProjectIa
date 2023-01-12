@@ -122,6 +122,7 @@ class Board:
                      [0, 0, 0, 0, 0, 0],
                      [0, 0, 0, 0, 0, 0]])
 
+    points = [0, 0, 2, 4, 10000]
     moi_2 = 2
     moi_3 = moi_2*2
     moi_4 = 10000
@@ -137,25 +138,29 @@ class Board:
             for ligne in range(6):
                 tuple = [self.grid[colonne + i][ligne] for i in range(4)]
                 count_value = my_count(tuple)
-                c0 = count_value[0]
-                cp = count_value[player]
+                # c0 = count_value[0]
+                # cp = count_value[player]
                 # c0 = tuple.count(0)
                 # cp = tuple.count(player)
-                if c0 == 0:
-                    if cp == 4:
-                        moi += self.moi_4
-                    elif cp == 0:
-                        autre += self.autre_4
-                elif c0 == 1:
-                    if cp == 3:
-                        moi += self.moi_3
-                    elif cp == 0:
-                        autre += self.autre_3
-                elif c0 == 2:
-                    if cp == 2:
-                        moi += self.moi_2
-                    elif cp == 0:
-                        autre += self.autre_2
+                # if c0 == 0:
+                #     if cp == 4:
+                #         moi += self.moi_4
+                #     elif cp == 0:
+                #         autre += self.autre_4
+                # elif c0 == 1:
+                #     if cp == 3:
+                #         moi += self.moi_3
+                #     elif cp == 0:
+                #         autre += self.autre_3
+                # elif c0 == 2:
+                #     if cp == 2:
+                #         moi += self.moi_2
+                #     elif cp == 0:
+                #         autre += self.autre_2
+                if count_value[player] == 0:
+                    autre += self.points[count_value[player % 2+1]]
+                elif count_value[player % 2+1] == 0:
+                    moi += self.points[count_value[player]]
         return moi, autre
 
     def __eval_colonnes__(self, player):
@@ -165,25 +170,29 @@ class Board:
             for ligne in range(3):
                 tuple = [self.grid[colonne][ligne + i] for i in range(4)]
                 count_value = my_count(tuple)
-                c0 = count_value[0]
-                cp = count_value[player]
+                # c0 = count_value[0]
+                # cp = count_value[player]
                 # c0 = tuple.count(0)
                 # cp = tuple.count(player)
-                if c0 == 0:
-                    if cp == 4:
-                        moi += self.moi_4
-                    elif cp == 0:
-                        autre += self.autre_4
-                elif c0 == 1:
-                    if cp == 3:
-                        moi += self.moi_3
-                    elif cp == 0:
-                        autre += self.autre_3
-                elif c0 == 2:
-                    if cp == 2:
-                        moi += self.moi_2
-                    elif cp == 0:
-                        autre += self.autre_2
+                # if c0 == 0:
+                #     if cp == 4:
+                #         moi += self.moi_4
+                #     elif cp == 0:
+                #         autre += self.autre_4
+                # elif c0 == 1:
+                #     if cp == 3:
+                #         moi += self.moi_3
+                #     elif cp == 0:
+                #         autre += self.autre_3
+                # elif c0 == 2:
+                #     if cp == 2:
+                #         moi += self.moi_2
+                #     elif cp == 0:
+                #         autre += self.autre_2
+                if count_value[player] == 0:
+                    autre += self.points[count_value[player % 2+1]]
+                elif count_value[player % 2+1] == 0:
+                    moi += self.points[count_value[player]]
         return moi, autre
 
     def __eval_diagonales__(self, player):
@@ -195,25 +204,29 @@ class Board:
                          [self.grid[-(colonne + i + 1)][ligne + i] for i in range(4)]]
                 for i in range(2):
                     count_value = my_count(tuple[i])
-                    c0 = count_value[0]
-                    cp = count_value[player]
+                    # c0 = count_value[0]
+                    # cp = count_value[player]
                     # c0 = tuple[i].count(0)
                     # cp = tuple[i].count(player)
-                    if c0 == 0:
-                        if cp == 4:
-                            moi += self.moi_4
-                        elif cp == 0:
-                            autre += self.autre_4
-                    elif c0 == 1:
-                        if cp == 3:
-                            moi += self.moi_3
-                        elif cp == 0:
-                            autre += self.autre_3
-                    elif c0 == 2:
-                        if cp == 2:
-                            moi += self.moi_2
-                        elif cp == 0:
-                            autre += self.autre_2
+                    # if c0 == 0:
+                    #     if cp == 4:
+                    #         moi += self.moi_4
+                    #     elif cp == 0:
+                    #         autre += self.autre_4
+                    # elif c0 == 1:
+                    #     if cp == 3:
+                    #         moi += self.moi_3
+                    #     elif cp == 0:
+                    #         autre += self.autre_3
+                    # elif c0 == 2:
+                    #     if cp == 2:
+                    #         moi += self.moi_2
+                    #     elif cp == 0:
+                    #         autre += self.autre_2
+                    if count_value[player] == 0:
+                        autre += self.points[count_value[player % 2+1]]
+                    elif count_value[player % 2+1] == 0:
+                        moi += self.points[count_value[player]]
         return moi, autre
 
     def eval(self, player):
