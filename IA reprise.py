@@ -138,25 +138,6 @@ class Board:
             for ligne in range(6):
                 tuple = [self.grid[colonne + i][ligne] for i in range(4)]
                 count_value = my_count(tuple)
-                # c0 = count_value[0]
-                # cp = count_value[player]
-                # c0 = tuple.count(0)
-                # cp = tuple.count(player)
-                # if c0 == 0:
-                #     if cp == 4:
-                #         moi += self.moi_4
-                #     elif cp == 0:
-                #         autre += self.autre_4
-                # elif c0 == 1:
-                #     if cp == 3:
-                #         moi += self.moi_3
-                #     elif cp == 0:
-                #         autre += self.autre_3
-                # elif c0 == 2:
-                #     if cp == 2:
-                #         moi += self.moi_2
-                #     elif cp == 0:
-                #         autre += self.autre_2
                 if count_value[player] == 0:
                     autre += self.points[count_value[player % 2+1]]
                 elif count_value[player % 2+1] == 0:
@@ -170,25 +151,6 @@ class Board:
             for ligne in range(3):
                 tuple = [self.grid[colonne][ligne + i] for i in range(4)]
                 count_value = my_count(tuple)
-                # c0 = count_value[0]
-                # cp = count_value[player]
-                # c0 = tuple.count(0)
-                # cp = tuple.count(player)
-                # if c0 == 0:
-                #     if cp == 4:
-                #         moi += self.moi_4
-                #     elif cp == 0:
-                #         autre += self.autre_4
-                # elif c0 == 1:
-                #     if cp == 3:
-                #         moi += self.moi_3
-                #     elif cp == 0:
-                #         autre += self.autre_3
-                # elif c0 == 2:
-                #     if cp == 2:
-                #         moi += self.moi_2
-                #     elif cp == 0:
-                #         autre += self.autre_2
                 if count_value[player] == 0:
                     autre += self.points[count_value[player % 2+1]]
                 elif count_value[player % 2+1] == 0:
@@ -204,25 +166,6 @@ class Board:
                          [self.grid[-(colonne + i + 1)][ligne + i] for i in range(4)]]
                 for i in range(2):
                     count_value = my_count(tuple[i])
-                    # c0 = count_value[0]
-                    # cp = count_value[player]
-                    # c0 = tuple[i].count(0)
-                    # cp = tuple[i].count(player)
-                    # if c0 == 0:
-                    #     if cp == 4:
-                    #         moi += self.moi_4
-                    #     elif cp == 0:
-                    #         autre += self.autre_4
-                    # elif c0 == 1:
-                    #     if cp == 3:
-                    #         moi += self.moi_3
-                    #     elif cp == 0:
-                    #         autre += self.autre_3
-                    # elif c0 == 2:
-                    #     if cp == 2:
-                    #         moi += self.moi_2
-                    #     elif cp == 0:
-                    #         autre += self.autre_2
                     if count_value[player] == 0:
                         autre += self.points[count_value[player % 2+1]]
                     elif count_value[player % 2+1] == 0:
@@ -283,11 +226,7 @@ class Board:
             for ligne in range(6):
                 tuple = [self.grid[colonne + i][ligne] for i in range(4)]
                 count_value = my_count(tuple)
-                c0 = count_value[0]
-                cp = count_value[1]
-                # c0 = tuple.count(0)
-                # cp = tuple.count(1)
-                if c0 == 0 and (cp == 4 or cp == 0):
+                if count_value[1] == 4 or count_value[2] == 4:
                     return [True, tuple[0]]
         return [False, None]
 
@@ -296,11 +235,7 @@ class Board:
             for ligne in range(3):
                 tuple = [self.grid[colonne][ligne + i] for i in range(4)]
                 count_value = my_count(tuple)
-                c0 = count_value[0]
-                cp = count_value[1]
-                # c0 = tuple.count(0)
-                # cp = tuple.count(1)
-                if c0 == 0 and (cp == 4 or cp == 0):
+                if count_value[1] == 4 or count_value[2] == 4:
                     return [True, tuple[0]]
         return [False, None]
 
@@ -311,11 +246,7 @@ class Board:
                          [self.grid[-(colonne + i + 1)][ligne + i] for i in range(4)]]
                 for i in range(2):
                     count_value = my_count(tuple[i])
-                    c0 = count_value[0]
-                    cp = count_value[1]
-                    # c0 = tuple[i].count(0)
-                    # cp = tuple[i].count(1)
-                    if c0 == 0 and (cp == 4 or cp == 0):
+                    if count_value[1] == 4 or count_value[2] == 4:
                         return [True, tuple[i][0]]
         return [False, None]
 
@@ -429,9 +360,9 @@ combobox_player2 = ttk.Combobox(window, state='readonly')
 combobox_player2.grid(row=3, column=1)
 
 combobox_player1['values'] = player_type
-combobox_player1.current(4)
+combobox_player1.current(6)
 combobox_player2['values'] = player_type
-combobox_player2.current(4)
+combobox_player2.current(6)
 
 button2 = tk.Button(window, text='New game', command=game.launch)
 button2.grid(row=4, column=0)
