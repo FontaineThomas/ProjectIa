@@ -202,6 +202,10 @@ class Board:
         autre += autre_2 + autre_3
         if moi + autre == 0:
             return self.default
+        if moi >= self.moi_4:
+            return 1
+        if autre >= self.autre_4:
+            return 0
         return moi / (moi + autre**3)
 
     def copy(self):
