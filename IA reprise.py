@@ -136,7 +136,6 @@ class Board:
         autre = 0
         for colonne in range(4):
             for ligne in range(6):
-                # tuple = [self.grid[colonne + i][ligne] for i in range(4)]
                 count_value = my_count([self.grid[colonne + i][ligne] for i in range(4)])
                 if count_value[player] == 0:
                     autre += self.points[count_value[player % 2+1]]
@@ -149,7 +148,6 @@ class Board:
         autre = 0
         for colonne in range(7):
             for ligne in range(3):
-                # tuple = [self.grid[colonne][ligne + i] for i in range(4)]
                 count_value = my_count([self.grid[colonne][ligne + i] for i in range(4)])
                 if count_value[player] == 0:
                     autre += self.points[count_value[player % 2+1]]
@@ -162,16 +160,6 @@ class Board:
         autre = 0
         for colonne in range(4):
             for ligne in range(3):
-                # tuple = [[self.grid[colonne + i][ligne + i] for i in range(4)],
-                #          [self.grid[-(colonne + i + 1)][ligne + i] for i in range(4)]]
-                # for i in range(2):
-                #     count_value = my_count(tuple[i])
-                #     if count_value[player] == 0:
-                #         autre += self.points[count_value[player % 2+1]]
-                #     elif count_value[player % 2+1] == 0:
-                #         moi += self.points[count_value[player]]
-                # tuple = [[self.grid[colonne + i][ligne + i] for i in range(4)],
-                #          [self.grid[-(colonne + i + 1)][ligne + i] for i in range(4)]]
                 count_value = my_count([self.grid[colonne + i][ligne + i] for i in range(4)])
                 if count_value[player] == 0:
                     autre += self.points[count_value[player % 2+1]]
@@ -252,7 +240,6 @@ class Board:
     def __check_colonnes__(self):
         for colonne in range(7):
             for ligne in range(3):
-                # tuple = [self.grid[colonne][ligne + i] for i in range(4)]
                 count_value = my_count([self.grid[colonne][ligne + i] for i in range(4)])
                 if count_value[1] == 4 or count_value[2] == 4:
                     return [True, self.grid[colonne][ligne]]
@@ -261,15 +248,6 @@ class Board:
     def __check_diagonales__(self):
         for colonne in range(4):
             for ligne in range(3):
-                # tuple = [[self.grid[colonne + i][ligne + i] for i in range(4)],
-                #          [self.grid[-(colonne + i + 1)][ligne + i] for i in range(4)]]
-                # for i in range(2):
-                #     count_value = my_count(tuple[i])
-                #     if count_value[1] == 4 or count_value[2] == 4:
-                #         return [True, tuple[i][0]]
-                # tuple = [[self.grid[colonne + i][ligne + i] for i in range(4)],
-                #          [self.grid[-(colonne + i + 1)][ligne + i] for i in range(4)]]
-                # for i in range(2):
                 count_value = my_count([self.grid[colonne + i][ligne + i] for i in range(4)])
                 if count_value[1] == 4 or count_value[2] == 4:
                     return [True, self.grid[colonne][ligne]]
@@ -389,9 +367,9 @@ combobox_player2 = ttk.Combobox(window, state='readonly')
 combobox_player2.grid(row=3, column=1)
 
 combobox_player1['values'] = player_type
-combobox_player1.current(6)
+combobox_player1.current(8)
 combobox_player2['values'] = player_type
-combobox_player2.current(6)
+combobox_player2.current(8)
 
 button2 = tk.Button(window, text='New game', command=game.launch)
 button2.grid(row=4, column=0)
