@@ -117,7 +117,7 @@ class Board:
 
     moi_2 = 2
     moi_3 = moi_2*2
-    moi_4 = moi_3*2
+    moi_4 = 10000
     autre_4 = moi_4
     autre_3 = moi_3
     autre_2 = moi_2
