@@ -129,20 +129,22 @@ class Board:
         for colonne in range(4):
             for ligne in range(6):
                 tuple = [self.grid[colonne + i][ligne] for i in range(4)]
-                if tuple.count(0) == 0:
-                    if tuple.count(player) == 4:
+                c0 = tuple.count(0)
+                cp = tuple.count(player)
+                if c0 == 0:
+                    if cp == 4:
                         moi += self.moi_4
-                    elif tuple.count(player) == 0:
+                    elif cp == 0:
                         autre += self.autre_4
-                elif tuple.count(0) == 1:
-                    if tuple.count(player) == 3:
+                elif c0 == 1:
+                    if cp == 3:
                         moi += self.moi_3
-                    elif tuple.count(player) == 0:
+                    elif cp == 0:
                         autre += self.autre_3
-                elif tuple.count(0) == 2:
-                    if tuple.count(player) == 2:
+                elif c0 == 2:
+                    if cp == 2:
                         moi += self.moi_2
-                    elif tuple.count(player) == 0:
+                    elif cp == 0:
                         autre += self.autre_2
         return moi, autre
 
@@ -152,20 +154,22 @@ class Board:
         for colonne in range(7):
             for ligne in range(3):
                 tuple = [self.grid[colonne][ligne + i] for i in range(4)]
-                if tuple.count(0) == 0:
-                    if tuple.count(player) == 4:
+                c0 = tuple.count(0)
+                cp = tuple.count(player)
+                if c0 == 0:
+                    if cp == 4:
                         moi += self.moi_4
-                    elif tuple.count(player) == 0:
+                    elif cp == 0:
                         autre += self.autre_4
-                elif tuple.count(0) == 1:
-                    if tuple.count(player) == 3:
+                elif c0 == 1:
+                    if cp == 3:
                         moi += self.moi_3
-                    elif tuple.count(player) == 0:
+                    elif cp == 0:
                         autre += self.autre_3
-                elif tuple.count(0) == 2:
-                    if tuple.count(player) == 2:
+                elif c0 == 2:
+                    if cp == 2:
                         moi += self.moi_2
-                    elif tuple.count(player) == 0:
+                    elif cp == 0:
                         autre += self.autre_2
         return moi, autre
 
@@ -177,20 +181,22 @@ class Board:
                 tuple = [[self.grid[colonne + i][ligne + i] for i in range(4)],
                          [self.grid[-(colonne + i + 1)][ligne + i] for i in range(4)]]
                 for i in range(2):
-                    if tuple[i].count(0) == 0:
-                        if tuple[i].count(player) == 4:
+                    c0 = tuple[i].count(0)
+                    cp = tuple[i].count(player)
+                    if c0 == 0:
+                        if cp == 4:
                             moi += self.moi_4
-                        elif tuple[i].count(player) == 0:
+                        elif cp == 0:
                             autre += self.autre_4
-                    elif tuple[i].count(0) == 1:
-                        if tuple[i].count(player) == 3:
+                    elif c0 == 1:
+                        if cp == 3:
                             moi += self.moi_3
-                        elif tuple[i].count(player) == 0:
+                        elif cp == 0:
                             autre += self.autre_3
-                    elif tuple[i].count(0) == 2:
-                        if tuple[i].count(player) == 2:
+                    elif c0 == 2:
+                        if cp == 2:
                             moi += self.moi_2
-                        elif tuple[i].count(player) == 0:
+                        elif cp == 0:
                             autre += self.autre_2
         return moi, autre
 
