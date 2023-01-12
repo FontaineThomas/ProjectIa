@@ -249,32 +249,46 @@ class Board:
     def column_filled(self, column):
         return self.grid[column][5] != 0
 
-    def check_victory(self):
-        # Horizontal alignment check
-        for line in range(6):
-            for horizontal_shift in range(4):
-                if self.grid[horizontal_shift][line] == self.grid[horizontal_shift + 1][line] == \
-                        self.grid[horizontal_shift + 2][line] == self.grid[horizontal_shift + 3][line] != 0:
-                    return [True, self.grid[horizontal_shift][line]]
-        # Vertical alignment check
-        for column in range(7):
-            for vertical_shift in range(3):
-                if self.grid[column][vertical_shift] == self.grid[column][vertical_shift + 1] == \
-                        self.grid[column][vertical_shift + 2] == self.grid[column][vertical_shift + 3] != 0:
-                    return [True, self.grid[column][vertical_shift]]
-        # Diagonal alignment check
-        for horizontal_shift in range(4):
-            for vertical_shift in range(3):
-                if self.grid[horizontal_shift][vertical_shift] == self.grid[horizontal_shift + 1][vertical_shift + 1] == \
-                        self.grid[horizontal_shift + 2][vertical_shift + 2] == self.grid[horizontal_shift + 3][
-                    vertical_shift + 3] != 0:
-                    return [True, self.grid[horizontal_shift][vertical_shift]]
-                elif self.grid[horizontal_shift][5 - vertical_shift] == self.grid[horizontal_shift + 1][
-                    4 - vertical_shift] == \
-                        self.grid[horizontal_shift + 2][3 - vertical_shift] == self.grid[horizontal_shift + 3][
-                    2 - vertical_shift] != 0:
-                    return [True, self.grid[horizontal_shift][5 - vertical_shift]]
+    def __check_lignes__(self):
+        for colonne in range(4):
+            for ligne in range(6):
+                tuple = [self.grid[colonne + i][ligne] for i in range(4)]
+                c0 = tuple.count(0)
+                cp = tuple.count(1)
+                if c0 == 0 and (cp == 4 or cp == 0):
+                    return [True, tuple[0]]
         return [False, None]
+
+    def __check_colonnes__(self):
+        for colonne in range(7):
+            for ligne in range(3):
+                tuple = [self.grid[colonne][ligne + i] for i in range(4)]
+                c0 = tuple.count(0)
+                cp = tuple.count(1)
+                if c0 == 0 and (cp == 4 or cp == 0):
+                    return [True, tuple[0]]
+        return [False, None]
+
+    def __check_diagonales__(self):
+        for colonne in range(4):
+            for ligne in range(3):
+                tuple = [[self.grid[colonne + i][ligne + i] for i in range(4)],
+                         [self.grid[-(colonne + i + 1)][ligne + i] for i in range(4)]]
+                for i in range(2):
+                    c0 = tuple[i].count(0)
+                    cp = tuple[i].count(1)
+                    if c0 == 0 and (cp == 4 or cp == 0):
+                        return [True, tuple[i][0]]
+        return [False, None]
+
+    def check_victory(self):
+        l = self.__check_lignes__()
+        if l[0]:
+            return l
+        c = self.__check_colonnes__()
+        if c[0]:
+            return c
+        return  self.__check_diagonales__()
 
 
 class Connect4:
