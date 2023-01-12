@@ -15,6 +15,13 @@ for i in range(42):
     player_type.append('AI: alpha-beta level ' + str(i + 1))
 
 
+def my_count(l):
+    retour = [0, 0, 0]
+    for i in l:
+        retour[i] += 1
+    return retour
+
+
 def alpha_beta_decision(board, turn, ai_level, queue, max_player):
     global iteration
     global max_value
@@ -129,8 +136,11 @@ class Board:
         for colonne in range(4):
             for ligne in range(6):
                 tuple = [self.grid[colonne + i][ligne] for i in range(4)]
-                c0 = tuple.count(0)
-                cp = tuple.count(player)
+                count_value = my_count(tuple)
+                c0 = count_value[0]
+                cp = count_value[player]
+                # c0 = tuple.count(0)
+                # cp = tuple.count(player)
                 if c0 == 0:
                     if cp == 4:
                         moi += self.moi_4
@@ -154,8 +164,11 @@ class Board:
         for colonne in range(7):
             for ligne in range(3):
                 tuple = [self.grid[colonne][ligne + i] for i in range(4)]
-                c0 = tuple.count(0)
-                cp = tuple.count(player)
+                count_value = my_count(tuple)
+                c0 = count_value[0]
+                cp = count_value[player]
+                # c0 = tuple.count(0)
+                # cp = tuple.count(player)
                 if c0 == 0:
                     if cp == 4:
                         moi += self.moi_4
@@ -181,8 +194,11 @@ class Board:
                 tuple = [[self.grid[colonne + i][ligne + i] for i in range(4)],
                          [self.grid[-(colonne + i + 1)][ligne + i] for i in range(4)]]
                 for i in range(2):
-                    c0 = tuple[i].count(0)
-                    cp = tuple[i].count(player)
+                    count_value = my_count(tuple[i])
+                    c0 = count_value[0]
+                    cp = count_value[player]
+                    # c0 = tuple[i].count(0)
+                    # cp = tuple[i].count(player)
                     if c0 == 0:
                         if cp == 4:
                             moi += self.moi_4
@@ -253,8 +269,11 @@ class Board:
         for colonne in range(4):
             for ligne in range(6):
                 tuple = [self.grid[colonne + i][ligne] for i in range(4)]
-                c0 = tuple.count(0)
-                cp = tuple.count(1)
+                count_value = my_count(tuple)
+                c0 = count_value[0]
+                cp = count_value[1]
+                # c0 = tuple.count(0)
+                # cp = tuple.count(1)
                 if c0 == 0 and (cp == 4 or cp == 0):
                     return [True, tuple[0]]
         return [False, None]
@@ -263,8 +282,11 @@ class Board:
         for colonne in range(7):
             for ligne in range(3):
                 tuple = [self.grid[colonne][ligne + i] for i in range(4)]
-                c0 = tuple.count(0)
-                cp = tuple.count(1)
+                count_value = my_count(tuple)
+                c0 = count_value[0]
+                cp = count_value[1]
+                # c0 = tuple.count(0)
+                # cp = tuple.count(1)
                 if c0 == 0 and (cp == 4 or cp == 0):
                     return [True, tuple[0]]
         return [False, None]
@@ -275,8 +297,11 @@ class Board:
                 tuple = [[self.grid[colonne + i][ligne + i] for i in range(4)],
                          [self.grid[-(colonne + i + 1)][ligne + i] for i in range(4)]]
                 for i in range(2):
-                    c0 = tuple[i].count(0)
-                    cp = tuple[i].count(1)
+                    count_value = my_count(tuple[i])
+                    c0 = count_value[0]
+                    cp = count_value[1]
+                    # c0 = tuple[i].count(0)
+                    # cp = tuple[i].count(1)
                     if c0 == 0 and (cp == 4 or cp == 0):
                         return [True, tuple[i][0]]
         return [False, None]
