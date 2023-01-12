@@ -367,9 +367,9 @@ combobox_player2 = ttk.Combobox(window, state='readonly')
 combobox_player2.grid(row=3, column=1)
 
 combobox_player1['values'] = player_type
-combobox_player1.current(8)
+combobox_player1.current(0)
 combobox_player2['values'] = player_type
-combobox_player2.current(8)
+combobox_player2.current(4)
 
 button2 = tk.Button(window, text='New game', command=game.launch)
 button2.grid(row=4, column=0)
@@ -379,7 +379,5 @@ button.grid(row=4, column=1)
 
 # Mouse handling
 canvas1.bind('<Button-1>', game.click)
-
-game.launch()
 
 window.mainloop()
